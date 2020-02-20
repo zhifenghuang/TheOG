@@ -1,17 +1,24 @@
 package com.common.lib.activity
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.alibaba.android.arouter.launcher.ARouter
 import com.common.lib.mvp.IPresenter
+import com.common.lib.utils.PermissionUtils
+import java.util.ArrayList
 
 abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickListener {
 
     protected var mPresenter: P? = null
+
+    private var mPermissionCallBack: PermissionUtils.PermissionCallBack? = null
 
     protected abstract fun getLayoutId(): Int
 
@@ -21,10 +28,20 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ARouter.getInstance().inject(this)
         setContentView(getLayoutId())
         mPresenter = getPresenter();
         onCreated(savedInstanceState)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermission(
+                0,
+                null,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        }
     }
 
     protected fun setViewsOnClickListener(vararg views: View) {
@@ -39,19 +56,19 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
 
     protected fun setViewVisible(vararg views: View) {
         for (view in views) {
-            view.setVisibility(View.VISIBLE)
+            view.visibility = View.VISIBLE
         }
     }
 
     protected fun setViewGone(vararg views: View) {
         for (view in views) {
-            view.setVisibility(View.GONE)
+            view.visibility = View.GONE
         }
     }
 
     protected fun setViewInvisible(vararg views: View) {
         for (view in views) {
-            view.setVisibility(View.INVISIBLE)
+            view.visibility = View.INVISIBLE
         }
     }
 
@@ -65,6 +82,53 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
             intent.putExtras(bundle)
         }
         startActivity(intent)
+    }
+
+    fun requestPermission(
+        permissionReqCode: Int,
+        callback: PermissionUtils.PermissionCallBack?,
+        vararg permissions: String
+    ) {
+        mPermissionCallBack = callback
+        var uncheckPermissions: ArrayList<String>? = null
+        for (permission in permissions) {
+            if (!PermissionUtils.isGrantPermission(this, permission)) {
+                //进行权限请求
+                if (uncheckPermissions == null) {
+                    uncheckPermissions = ArrayList()
+                }
+                uncheckPermissions.add(permission)
+            }
+        }
+        if (uncheckPermissions != null && !uncheckPermissions.isEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                uncheckPermissions.toTypedArray(),
+                permissionReqCode
+            )
+        } else {
+            mPermissionCallBack?.onSuccess()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        var isAllGranted = true
+        for (result in grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                isAllGranted = false
+                break
+            }
+        }
+        if (isAllGranted) {
+            mPermissionCallBack?.onSuccess()
+        } else {
+            mPermissionCallBack?.onFailure()
+        }
     }
 
     /**

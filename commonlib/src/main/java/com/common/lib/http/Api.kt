@@ -24,32 +24,13 @@ class Api private constructor() {
     private val TAG: String = "Api"
 
     private var mRetrofit: Retrofit? = null
-    private val DEFAULT_TIMEOUT = 10
+    private val DEFAULT_TIMEOUT = 20
 
     init {
         val builder = OkHttpClient.Builder();
-        val loggingInterceptor =
-            HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message -> Log.i(TAG, message) })
-
-
-//        val interceptor = Interceptor { chain ->
-//            val request: Request
-        //           if (!TextUtils.isEmpty()) {
-//                request = chain.request()
-//                    .newBuilder()
-//                    .addHeader("Authorization", "token)
-//                    .build()
-//            } else {
-//                request = chain.request()
-//                    .newBuilder()
-//                    .build()
-//            }
-        //           chain.proceed(request)
-//        }
-
+        val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         builder.connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
-            //          .addInterceptor(interceptor)
             .addInterceptor(loggingInterceptor)
         mRetrofit = Retrofit.Builder()
             .client(builder.build())
@@ -84,12 +65,12 @@ class Api private constructor() {
         password: String,
         observer: HttpObserver<BasicResponse<UserBean>, UserBean>
     ) {
-        val iApi = mRetrofit?.create(IApi::class.java)
-        val observable = iApi?.login(
-            RequestBody.create(MediaType.parse("text/plain"), account)
-            , RequestBody.create(MediaType.parse("text/plain"), password)
-        )
-        toSubscribe(observable, observer)
+//        val iApi = mRetrofit?.create(IApi::class.java)
+//        val observable = iApi?.login(
+//            RequestBody.create(MediaType.parse("text/plain"), account)
+//            , RequestBody.create(MediaType.parse("text/plain"), password)
+//        )
+//        toSubscribe(observable, observer)
     }
 
     private fun <T : BasicResponse<Data>, Data> toSubscribe(

@@ -65,6 +65,10 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
         }
     }
 
+    protected fun setTextByServerKey(tv: TextView, serverKey: String) {
+        tv.text = getTextByKey(serverKey)
+    }
+
     protected fun goPager(cls: Class<*>) {
         goPager(cls, null)
     }
@@ -89,5 +93,21 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
         //释放资源
         mPresenter?.onDestroy()
         mPresenter = null
+    }
+
+    fun getTextByKey(key: String): String {
+        var value = ""
+        try {
+            val stringId = getResources().getIdentifier(
+                key,
+                "string", activity?.packageName
+            )
+            if (stringId > 0) {
+                value = getResources().getString(stringId)// 取出配置的string文件中的默认值
+            }
+        } catch (e: Exception) {
+            value = ""
+        }
+        return value
     }
 }

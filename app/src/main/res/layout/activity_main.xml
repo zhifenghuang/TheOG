@@ -10,91 +10,55 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_ecedef" />
+
     <LinearLayout
         android:id="@+id/ll_navigator"
         android:layout_width="match_parent"
-        android:layout_height="49dp"
-        android:background="@color/color_2a2e39"
+        android:layout_height="48dp"
+        android:background="@color/color_ffffff"
         android:orientation="horizontal">
 
-        <LinearLayout
+
+        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:scaleType="centerInside"
+            android:src="@drawable/story_selector" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-
-                android:textColor="@color/color_dabc86"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-        <LinearLayout
+        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:scaleType="centerInside"
+            android:src="@drawable/og_selector" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="14dp"
-                android:layout_marginTop="5dp"
-
-                android:textColor="@color/color_979797"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-        <LinearLayout
+        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:scaleType="centerInside"
+            android:src="@drawable/explore_selector" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-
-                android:textColor="@color/color_979797"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-        <LinearLayout
+        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:scaleType="centerInside"
+            android:src="@drawable/chat_selector" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:src="@drawable/profile_selector" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/color_979797"
-                android:textSize="10sp" />
-        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
