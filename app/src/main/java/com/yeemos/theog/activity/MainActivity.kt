@@ -5,8 +5,10 @@ import android.view.View
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.common.lib.activity.BaseActivity
+import com.common.lib.utils.BaseConstants
 import com.yeemos.theog.R
 import com.yeemos.theog.contract.MainContract
+import com.yeemos.theog.fragment.ChooseFragment
 import com.yeemos.theog.fragment.StoryFragment
 import com.yeemos.theog.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,11 +32,18 @@ class MainActivity : BaseActivity<MainPresenter>(), MainContract.View {
                 val tag: Int = it.tag as Int
                 switchFragment(mFragments.get(tag))
                 resetBottom(tag)
+                val bundle = Bundle();
+                bundle.putInt(BaseConstants.BUNDLE_EXTRA, 0)
+                goPager(ChooseFragment::class.java, bundle)
             }
         }
         initFragments()
         switchFragment(mFragments.get(0))
         resetBottom(0)
+    }
+
+    override fun updateUI() {
+
     }
 
     fun initFragments() {

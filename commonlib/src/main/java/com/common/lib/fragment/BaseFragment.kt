@@ -1,6 +1,6 @@
 package com.common.lib.fragment
 
-import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.common.lib.activity.BaseActivity
 import com.common.lib.mvp.IPresenter
+import com.common.lib.utils.BaseUtils
 
 abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
 
@@ -17,6 +19,8 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
     protected abstract fun getPresenter(): P
 
     protected abstract fun getLayoutId(): Int
+
+    protected abstract fun updateUI()
 
     /**
      * fragment的View创建好后调用
@@ -37,6 +41,11 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
         initView(view, savedInstanceState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
     protected fun setViewsOnClickListener(vararg views: View) {
         for (view in views) {
             view.setOnClickListener(this)
@@ -47,26 +56,26 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
         tv.setTextColor(ContextCompat.getColor(activity!!, clorId))
     }
 
+    protected fun setTextByServerKey(tv: TextView, serverKey: String) {
+        tv.text = getTextByKey(serverKey)
+    }
+
     protected fun setViewVisible(vararg views: View) {
         for (view in views) {
-            view.setVisibility(View.VISIBLE)
+            view.visibility = View.VISIBLE
         }
     }
 
     protected fun setViewGone(vararg views: View) {
         for (view in views) {
-            view.setVisibility(View.GONE)
+            view.visibility = View.GONE
         }
     }
 
     protected fun setViewInvisible(vararg views: View) {
         for (view in views) {
-            view.setVisibility(View.INVISIBLE)
+            view.visibility = View.INVISIBLE
         }
-    }
-
-    protected fun setTextByServerKey(tv: TextView, serverKey: String) {
-        tv.text = getTextByKey(serverKey)
     }
 
     protected fun goPager(cls: Class<*>) {
@@ -74,11 +83,7 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
     }
 
     protected fun goPager(cls: Class<*>, bundle: Bundle?) {
-        val intent = Intent(activity, cls)
-        if (bundle != null) {
-            intent.putExtras(bundle)
-        }
-        startActivity(intent)
+        (activity as BaseActivity<*>).goPager(cls, bundle)
     }
 
     fun showLoading() {
@@ -109,5 +114,9 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), View.OnClickListener {
             value = ""
         }
         return value
+    }
+
+    protected open fun setTopStatusBarStyle(topView: View) {
+        topView.setPadding(0, BaseUtils.getStatusBarHeight(resources) + topView.paddingTop, 0, 0)
     }
 }

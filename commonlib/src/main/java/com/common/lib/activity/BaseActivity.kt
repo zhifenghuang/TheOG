@@ -1,6 +1,7 @@
 package com.common.lib.activity
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,8 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.common.lib.mvp.IPresenter
+import com.common.lib.utils.BaseUtils
 import com.common.lib.utils.PermissionUtils
-import java.util.ArrayList
+import java.util.*
 
 abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickListener {
 
@@ -24,6 +26,8 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
 
     protected abstract fun onCreated(savedInstanceState: Bundle?)
 
+    protected abstract fun updateUI()
+
     protected abstract fun getPresenter(): P
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +35,10 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
         setContentView(getLayoutId())
         mPresenter = getPresenter();
         onCreated(savedInstanceState)
+    }
+
+    protected open fun setTopStatusBarStyle(topView: View) {
+        topView.setPadding(0, BaseUtils.getStatusBarHeight(resources) + topView.paddingTop, 0, 0)
     }
 
     override fun onStart() {
@@ -44,6 +52,11 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
     protected fun setViewsOnClickListener(vararg views: View) {
         for (view in views) {
             view.setOnClickListener(this)
@@ -52,6 +65,10 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
 
     protected fun setTextColor(tv: TextView, clorId: Int) {
         tv.setTextColor(ContextCompat.getColor(this, clorId))
+    }
+
+    protected fun setTextByServerKey(tv: TextView, serverKey: String) {
+        tv.text = getTextByKey(serverKey)
     }
 
     protected fun setViewVisible(vararg views: View) {
@@ -76,12 +93,22 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
         goPager(cls, null)
     }
 
-    protected fun goPager(cls: Class<*>, bundle: Bundle?) {
-        val intent = Intent(this, cls)
-        if (bundle != null) {
-            intent.putExtras(bundle)
+    fun goPager(pagerClass: Class<*>, bundle: Bundle?) {
+        if (Activity::class.java.isAssignableFrom(pagerClass)) {
+            val intent = Intent(this, pagerClass)
+            if (bundle != null) {
+                intent.putExtras(bundle)
+            }
+            startActivity(intent)
+        } else {
+            val name: String = pagerClass.getName()
+            val intent = Intent(this, EmptyActivity::class.java)
+            if (bundle != null) {
+                intent.putExtras(bundle)
+            }
+            intent.putExtra("FRAGMENT_NAME", name)
+            startActivity(intent)
         }
-        startActivity(intent)
     }
 
     fun requestPermission(
@@ -154,5 +181,21 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), View.OnClickL
 
     fun hideLoading() {
 
+    }
+
+    fun getTextByKey(key: String): String {
+        var value = ""
+        try {
+            val stringId = getResources().getIdentifier(
+                key,
+                "string", packageName
+            )
+            if (stringId > 0) {
+                value = getResources().getString(stringId)// 取出配置的string文件中的默认值
+            }
+        } catch (e: Exception) {
+            value = ""
+        }
+        return value
     }
 }

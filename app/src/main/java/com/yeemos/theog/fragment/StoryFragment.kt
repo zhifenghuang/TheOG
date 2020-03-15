@@ -22,4 +22,8 @@ class StoryFragment : BaseFragment<StoryPresenter>(),StoryContract.View {
     override fun onClick(v: View?) {
 
     }
+
+    override fun updateUI() {
+
+    }
 }

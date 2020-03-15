@@ -13,13 +13,13 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/color_ecedef" />
+        android:background="@color/color_ec_ed_ef" />
 
     <LinearLayout
         android:id="@+id/ll_navigator"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/color_ffffff"
+        android:background="@color/color_ff_ff_ff"
         android:orientation="horizontal">
 
 
